@@ -1,0 +1,245 @@
+{% block content %}
+<style>
+    /* General Reset */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Container */
+    .container {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+        width: 250px;
+        background-color: #2C3E50;
+        color: #ECF0F1;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .sidebar a {
+        color: #ECF0F1;
+        padding: 15px 10px;
+        margin: 5px 0;
+        text-decoration: none;
+        display: block;
+        transition: background 0.3s;
+    }
+
+    .sidebar a:hover {
+        background-color: #34495E;
+        border-radius: 4px;
+    }
+
+    /* Main Content */
+    .main-content {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background: #F7F9FA;
+    }
+
+    h1 {
+        color: #2C3E50;
+        margin-bottom: 20px;
+        text-align: center; /* Centered title */
+    }
+
+    h2 {
+        color: #34495E;
+        margin: 20px 0;
+        border-bottom: 2px solid #2980B9; /* Underline for headings */
+        padding-bottom: 10px;
+    }
+
+    /* Form Styling */
+    .form-container {
+        background-color: #FFF;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .form-container input,
+    .form-container textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .button {
+        background-color: #2980B9;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+    }
+
+    .button:hover {
+        background-color: #3498DB;
+    }
+
+    .button-approve {
+        background-color: #27AE60;
+    }
+
+    .button-approve:hover {
+        background-color: #2ECC71;
+    }
+
+    .button-deny {
+        background-color: #E74C3C;
+    }
+
+    .button-deny:hover {
+        background-color: #C0392B;
+    }
+
+    /* Table Styling */
+    .table-container {
+        overflow-x: auto;
+        margin-bottom: 40px; /* Spacing below tables */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 0.9em;
+        background-color: #FFF;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden; /* Round corners for rows */
+    }
+
+    th,
+    td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #2980B9;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    td {
+        color: #34495E;
+    }
+
+    td a {
+        display: inline-block;
+        margin: 5px;
+    }
+
+    /* Responsive Layout */
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            height: auto;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+
+        .container {
+            flex-direction: column;
+        }
+
+        .main-content {
+            padding: 10px;
+        }
+
+        table,
+        th,
+        td {
+            font-size: 0.8em;
+        }
+    }
+</style>
+
+<div class="main-content">
+    <h1>Tutor Dashboard</h1>
+
+    <h2>OD Requests</h2>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Student</th>
+                <th>Date</th>
+                <th>Hours</th>
+                <th>Reason</th>
+                <th>File</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            {% for od in od_requests %}
+            <tr>
+                <td>{{ od.student.username }}</td>
+                <td>{{ od.date }}</td>
+                <td>{{ od.hours }}</td>
+                <td>{{ od.reason }}</td>
+                <td>
+                    <a href="{% url 'download_file' od.id %}" class="button">Download</a>
+                </td>
+                <td>{{ od.status }}</td>
+                <td>
+                    <a href="{% url 'approve_od' od.id %}" class="button button-approve">Approve</a>
+                    <a href="{% url 'deny_od' od.id %}" class="button button-deny">Deny</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <h2>Leave Intimations</h2>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Student</th>
+                <th>Date</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            {% for leave in leave_intimations %}
+            <tr>
+                <td>{{ leave.student.username }}</td>
+                <td>{{ leave.date }}</td>
+                <td>{{ leave.reason }}</td>
+                <td>{{ leave.status }}</td>
+                <td>
+                    <a href="{% url 'approve_leave' leave.id %}" class="button button-approve">Approve</a>
+                    <a href="{% url 'deny_leave' leave.id %}" class="button button-deny">Deny</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
